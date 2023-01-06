@@ -48,6 +48,7 @@ function ReservationForm({ initialFormState, createReservation, setReservationEr
               placeholder="First Name"
               onChange={changeHandler}
               value={ `${reservation.first_name}` }
+              required={true}
             />
           </div>
         </div>
@@ -64,6 +65,7 @@ function ReservationForm({ initialFormState, createReservation, setReservationEr
               placeholder="Last Name"
               onChange={changeHandler}
               value={`${reservation.last_name}`}
+              required={true}
             />
           </div>
         </div>
@@ -78,6 +80,7 @@ function ReservationForm({ initialFormState, createReservation, setReservationEr
               placeholder="(___)-___-____"
               onChange={changeHandler}
               value={`${reservation.mobile_number}`}
+              required={true}
             />
           </div>
         </div>
@@ -93,6 +96,7 @@ function ReservationForm({ initialFormState, createReservation, setReservationEr
               pattern="\d{4}-\d{2}-\d{2}"
               onChange={changeHandler}
               value={`${reservation.reservation_date}`}
+              required={true}
             />
           </div>
         </div>
@@ -108,6 +112,7 @@ function ReservationForm({ initialFormState, createReservation, setReservationEr
               pattern="[0-9]{2}:[0-9]{2}"
               onChange={changeHandler}
               value={`${reservation.reservation_time}`}
+              required={true}
             />
           </div>
         </div>
@@ -123,6 +128,7 @@ function ReservationForm({ initialFormState, createReservation, setReservationEr
               onChange={changeHandler}
               value={`${reservation.people}`}
               min="1"
+              required={true}
             />
             <br />
           </div>
