@@ -9,14 +9,23 @@ function listReservationByDate(date) {
     return knex("reservations")
     .select("*")
     .where({ reservation_date: date })
-    .orderBy("reservation_time")
+    .orderBy("reservations.reservation_time");
 }
 
 function create(reservation) {
-    return knex("reservations")
+    // console.log("BEFORE INSERT STATEMENT")
+    const data = knex("reservations")
     .insert(reservation)
     .returning("*")
-    .then(newReservation => newReservation[0]);
+    .then((newReservation) => {
+        // console.log("IN INSERT STATEMENT")
+        // console.log(newReservation)
+        return newReservation[0]
+    }
+    );
+    // console.log("AFTER INSERT STATEMENT")
+    // console.log(data)
+    return data;
 }
 
 module.exports = {
