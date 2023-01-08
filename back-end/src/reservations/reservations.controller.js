@@ -33,6 +33,9 @@ const validProperties = [
   "people",
 ];
 
+const formattedDate = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
+const formattedTime = /[0-9]{2}:[0-9]{2}/;
+
 function hasValidProperties(req, res, next) {
   const { data = {} } = req.body;
 
@@ -76,12 +79,19 @@ function hasValidProperties(req, res, next) {
   next();
 }
 
-const formattedDate = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
-const formattedTime = /[0-9]{2}:[0-9]{2}/;
+function reserveWithinBusinessHours(req, res, next) {
+  const { data = {} } = req.body;
+  const time = data.reservation_time;
 
-
+  if (time < "10:30" || time > "21:30") {
+    return next({
+      status: 400, 
+      message: `Restaurant is not open at this time.`
+    })
+  }
+}
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasValidProperties,  asyncErrorBoundary(create)],
+  create: [hasValidProperties, reserveWithinBusinessHours, asyncErrorBoundary(create)],
 };
