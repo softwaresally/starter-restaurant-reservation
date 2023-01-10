@@ -3,35 +3,10 @@ import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 
-function ReservationForm({ initialFormState, createReservation }) {
-    const [reservation, setReservation] = useState({ ...initialFormState });
-    const [reservationError, setReservationError] = useState(null);
+function ReservationForm({ reservation, changeHandler, submitHandler }) {
+
 
     const history = useHistory();
-
-    const changeHandler = ({ target }) => {
-        setReservation({
-            ...reservation,
-            [target.name]: target.value,
-        });
-    };
-
-    const submitHandler = async (event) => {
-        const abortController = new AbortController();
-
-        event.preventDefault();
-
-        setReservation({ ...initialFormState });
-
-        createReservation(reservation, abortController.signal)
-            .then(() => history.push(`/dashboard?date=${reservation.reservation_date}`))
-            .catch((error) => {
-                setReservationError(error);
-                setReservation(reservation);
-            });
-        
-            return abortController.abort();
-    }
 
     
     return (
