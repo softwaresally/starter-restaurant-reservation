@@ -78,10 +78,55 @@ function hasValidProperties(req, res, next) {
 
 const formattedDate = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
 const formattedTime = /[0-9]{2}:[0-9]{2}/;
+const days = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
+function isValidDate(req, res, next) {
+  const { data = {} } = req.body;
+
+  const resDateAndTime = new Date(`${data.reservation_date} ${data.reservation_time}`)
+
+  const day = days[resDateAndTime.getDay()];
+
+  if (resDateAndTime < new Date() && day === "Tuesday") {
+    return next({
+      status: 400,
+      message: `You can only create on a future date, excluding Tuesday.`
+    })
+  }
+
+  if (resDateAndTime < new Date()) {
+    return next({
+      status: 400,
+      message: `You can only create on a future date.`
+    })
+  }
+
+  if (day === "Tuesday") {
+    return next({
+      status: 400,
+      message: `Our restaurant is closed on Tuesday.`
+    })
+  }
+
+  if (data.reservation_time <= "10:30" || data.reservation_time >= "21:30") {
+    return next({
+      status: 400,
+      message: `Reservations can only be made between 10:30 am and 9:30 pm.`
+    })
+  }
+  next();
+}
 
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasValidProperties,  asyncErrorBoundary(create)],
+  create: [hasValidProperties, isValidDate, asyncErrorBoundary(create)],
 };
