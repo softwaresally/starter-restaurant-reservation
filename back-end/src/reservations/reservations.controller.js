@@ -125,7 +125,6 @@ function isValidDate(req, res, next) {
   next();
 }
 
-
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [hasValidProperties, isValidDate, asyncErrorBoundary(create)],

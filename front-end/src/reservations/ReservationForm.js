@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
+import ErrorAlert from "../layout/ErrorAlert";
 
-function ReservationForm({ initialFormState, createReservation, setReservationErr }) {
+function ReservationForm({ initialFormState, createReservation }) {
     const [reservation, setReservation] = useState({ ...initialFormState });
+    const [reservationError, setReservationError] = useState(null);
 
     const history = useHistory();
 
@@ -24,7 +26,7 @@ function ReservationForm({ initialFormState, createReservation, setReservationEr
         createReservation(reservation, abortController.signal)
             .then(() => history.push(`/dashboard?date=${reservation.reservation_date}`))
             .catch((error) => {
-                setReservationErr(error);
+                setReservationError(error);
                 setReservation(reservation);
             });
         

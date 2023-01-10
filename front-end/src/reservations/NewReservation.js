@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import ErrorAlert from "../layout/ErrorAlert";
 import { createReservation } from "../utils/api";
 import { today, formatAsTime } from "../utils/date-time";
 import ReservationForm from "./ReservationForm";
 
-function NewReservation() {
+function NewReservation({setReservationError}) {
     const initialFormState = {
         first_name: "", 
         last_name: "", 
@@ -13,7 +14,7 @@ function NewReservation() {
         people: "",
     }
 
-    const [reservationErr, setReservationErr] = useState(null);
+    // const [reservationErr, setReservationErr] = useState(false);
 
 return (
     <section>
@@ -22,7 +23,7 @@ return (
             <ReservationForm 
                 initialFormState={initialFormState} 
                 createReservation={createReservation}
-                setReservationErr={setReservationErr}
+                // setReservationErr={setReservationError}
                 method={"POST"}    
             />
         </div>
