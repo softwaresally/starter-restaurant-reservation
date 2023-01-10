@@ -79,6 +79,33 @@ function hasValidProperties(req, res, next) {
   next();
 }
 
+function reservationInTheFuture(req, res, next) {
+  const { data = {} } = req.body;
+  const reservationDate = new Date(`${data.reservation_date}`);
+  const today = new Date();
+
+  if (reservationDate < today) {
+    next({
+      status: 400,
+      message: `Reservations must be made for a future date.`
+    })
+  }
+  next();
+}
+
+function reserveWithinDaysOpen(req, res, next) {
+  const { data = {} } = req.body;
+  const day = new Date(`${data.reservation_date}`).getDay();
+  console.log(day)
+  if (day === 1) {
+    next({
+      status: 400,
+      message: `Restaurant is closed on Tuesdays.`
+    })
+  }
+  next();
+}
+
 function reserveWithinBusinessHours(req, res, next) {
   const { data = {} } = req.body;
   const time = data.reservation_time;
@@ -89,9 +116,10 @@ function reserveWithinBusinessHours(req, res, next) {
       message: `Restaurant is not open at this time.`
     })
   }
+  next();
 }
 
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasValidProperties, reserveWithinBusinessHours, asyncErrorBoundary(create)],
+  create: [hasValidProperties, reservationInTheFuture, reserveWithinDaysOpen, reserveWithinBusinessHours, asyncErrorBoundary(create)],
 };
