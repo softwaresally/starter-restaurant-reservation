@@ -19,9 +19,9 @@ async function read(req, res, next) {
 }
 
 async function tableExists(req, res, next) {
-    const { tableId } = req.params;
+    const { table_id } = req.params;
     // console.log(tableId)
-    const table = await tablesService.read(tableId);
+    const table = await tablesService.read(table_id);
     if (table) {
         res.locals.table = table;
         // console.log("tableExists", table)
@@ -29,7 +29,7 @@ async function tableExists(req, res, next) {
     }
     next({
         status: 404,
-        message: `Table not found for id: ${tableId ? tableId: ""}.`,
+        message: `Table not found for id: ${table_id ? table_id: ""}.`,
     })
 }
 
@@ -172,7 +172,7 @@ function hasValidProperties(req, res, next) {
 }
 
 async function validRequest(req, res, next) {
-    const { data = {} } = req.body;
+    const { data } = req.body;
     console.log(req.body);
     if (!data) {
         return next({
@@ -180,12 +180,12 @@ async function validRequest(req, res, next) {
             message: `You must submit request data in order for your request to be processed.`,
         });
     }
-    // if (!data.reservation_id) {
-    //     return next({
-    //         status: 400,
-    //         message: `You must include a reservation_id property.`,
-    //     });
-    // }
+    if (!data.reservation_id) {
+        return next({
+            status: 400,
+            message: `You must include a reservation_id property.`,
+        });
+    }
     next();
 }
 
