@@ -111,7 +111,7 @@ function ReservationForm({ reservation, changeHandler, submitHandler }) {
           </div>
         </div>
         <div>
-            <button className="btn btn-info btn-lg btn-block" type="submit">
+            <button className="btn btn-dark btn-lg btn-block" type="submit">
             Submit
             </button>
         </div>
