@@ -5,28 +5,27 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
  * List handler for reservation resources
  */
 async function list(req, res) {
-  const date = req.query.date;
-  
+  const { date, mobile_number } = req.query;
+  let reservations;
   if (date) {
-  const data = await reservationsService.listReservationByDate(date)
-  res.json({ data });
-  } else {
-    const data = await reservationsService.list();
-    res.json({ data });
+  reservations = await reservationsService.listReservationByDate(date)
+  } else if (mobile_number) {
+    reservations = await reservationsService.listReservationByNumber(mobile_number)
   }
+
+  res.json({ data: reservations });
 }
 
 
-// create handler for new reservation
+// // create handler for new reservation
 async function create(req, res) {
   const data = await reservationsService.create(req.body.data);
-  return res.status(201).json({ data });
+  res.status(201).json({ data });
 }
 
-// read function for reservations
-async function read(req, res, next) {
-  const { reservation: data } = res.locals;
-  res.json({ data });
+// // read function for reservations
+function read(req, res, next) {
+  res.json({ data: res.locals.reservation });
 }
 
 async function update(req, res, next) {
@@ -35,25 +34,26 @@ async function update(req, res, next) {
     reservation_id: res.locals.reservation.reservation_id,
   };
 
-  const data = await reservationsService.update(updatedReservation);
-  res.json({ data });
+  reservationsService
+    .update(updatedReservation)
+    .then((data) => res.json({ data }))
+    .catch(next);
 }
 
-function reservationExists(req, res, next) {
-  reservationsService.read(req.params.reservationId)
-  .then((reservation) => {
-    if (reservation) {
-      res.locals.reservation = reservation;
-      return next();
-    }
-    next({
-      status: 400,
-      message: `Reservation cannot be found.`
-    });
-  })
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.params;
+  const reservation = await reservationsService.read(reservation_id);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({
+    status: 404,
+    message: `Reservation ${reservation_id ? reservation_id : ""} not found.`,
+  });
 }
 
-// validation code below
+// // validation code below
 const validProperties = [
   "first_name",
   "last_name",
@@ -99,7 +99,7 @@ function hasValidProperties(req, res, next) {
       return next({
         status: 400,
         message: `You must enter the time ${property} you would like to dine with us in HH:MM format.`,
-      })
+      });
     }
   });
 
@@ -108,6 +108,7 @@ function hasValidProperties(req, res, next) {
 
 const formattedDate = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
 const formattedTime = /[0-9]{2}:[0-9]{2}/;
+
 const days = [
   "Sunday",
   "Monday",
@@ -117,45 +118,41 @@ const days = [
   "Friday",
   "Saturday",
 ];
-const validTableStatuses = [
-  "seated",
-  "booked",
-  "cancelled",
-  "finished",
-];
+
+const validTableStatuses = ["seated", "booked", "cancelled", "finished"];
 
 function isValidDate(req, res, next) {
   const { data = {} } = req.body;
 
   const resDateAndTime = new Date(`${data.reservation_date} ${data.reservation_time}`)
 
-  const day = days[resDateAndTime.getDay()];
+  let day = days[resDateAndTime.getDay()];
 
   if (resDateAndTime < new Date() && day === "Tuesday") {
     return next({
       status: 400,
-      message: `You can only create on a future date, excluding Tuesday.`
+      message: `You can only create on a future date, excluding Tuesday.`,
     })
   }
 
   if (resDateAndTime < new Date()) {
     return next({
       status: 400,
-      message: `You can only create on a future date.`
+      message: `You can only create on a future date.`,
     })
   }
 
   if (day === "Tuesday") {
     return next({
       status: 400,
-      message: `Our restaurant is closed on Tuesday.`
+      message: `Our restaurant is closed on Tuesdays.`,
     })
   }
 
   if (data.reservation_time <= "10:30" || data.reservation_time >= "21:30") {
     return next({
       status: 400,
-      message: `Reservations can only be made between 10:30 am and 9:30 pm.`
+      message: `Reservations can only be made between 10:30 am and 9:30 pm.`,
     })
   }
   next();
@@ -164,14 +161,14 @@ function isValidDate(req, res, next) {
 function validTableStatus(req, res, next) {
   const { status } = req.body.data;
 
-  if (!validTableStatuses.includes(status)) {
-    next({
-      status: 400,
-      message: `Table status not valid. Status must be "booked", "seated", "canceled", or "finished".`,
-    })
-  } else {
+  if (validTableStatuses.includes(status)) {
     res.locals.status = status;
     next();
+  } else {
+    next({
+      status: 400,
+      message: `Table status not valid. Status must be "booked", "seated", "cancelled", or "finished".`,
+    });
   }
 }
 
@@ -181,8 +178,10 @@ async function updateTableStatus(req, res, next) {
     status: res.locals.status,
   }
 
-  const data = await reservationsService.update(updatedStatus);
-  res.json({ data });
+  reservationsService
+    .update(updatedStatus)
+    .then((data) => res.json({ data }))
+    .catch(next);
 }
 
 function tableBooked(req, res, next) {
@@ -191,7 +190,7 @@ function tableBooked(req, res, next) {
   if (data.status === "seated" || data.status === "finished") {
     return next({
       status: 400,
-      message: `A new reservation cannot be created while the status is seated or finished`,
+      message: `A new reservation cannot be created with a status of seated or finished`,
     });
   }
   next();
@@ -206,7 +205,7 @@ function tableNotFinished(req, res, next) {
     return next({
       status: 400,
       message: `Reservation ${reservation_id} is finished.`,
-    })
+    });
   }
   next();
 }
@@ -214,7 +213,7 @@ function tableNotFinished(req, res, next) {
 module.exports = {
   list: asyncErrorBoundary(list),
   create: [hasValidProperties, isValidDate, tableBooked, asyncErrorBoundary(create)],
-  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
+  read: [asyncErrorBoundary(reservationExists), read],
   update: [asyncErrorBoundary(reservationExists), hasValidProperties, asyncErrorBoundary(update)],
   updateTableStatus: [asyncErrorBoundary(reservationExists), validTableStatus, tableNotFinished, asyncErrorBoundary(updateTableStatus)],
 };

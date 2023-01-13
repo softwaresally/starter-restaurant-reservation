@@ -172,7 +172,7 @@ function hasValidProperties(req, res, next) {
 }
 
 async function validRequest(req, res, next) {
-    const { data } = req.body;
+    const { data = {} } = req.body;
     console.log(req.body);
     if (!data) {
         return next({
@@ -180,12 +180,12 @@ async function validRequest(req, res, next) {
             message: `You must submit request data in order for your request to be processed.`,
         });
     }
-    if (!data.reservation_id) {
-        return next({
-            status: 400,
-            message: `You must include a reservation_id property.`,
-        });
-    }
+    // if (!data.reservation_id) {
+    //     return next({
+    //         status: 400,
+    //         message: `You must include a reservation_id property.`,
+    //     });
+    // }
     next();
 }
 

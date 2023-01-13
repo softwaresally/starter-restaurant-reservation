@@ -5,46 +5,48 @@ function list() {
     .select("*")
 }
 
-function listReservationByDate(date) {
+async function listReservationByDate(reservation_date) {
     return knex("reservations")
     .select("*")
-    .where({ reservation_date: date })
-    .orderBy("reservations.reservation_time");
+    .where({ reservation_date })
+    .whereNot({ status: "finished" })
+    .whereNot({ status: "cancelled" })
+    .orderBy("reservation_time");
 }
 
-function create(reservation) {
-    // console.log("BEFORE INSERT STATEMENT")
-    const data = knex("reservations")
+function listReservationByNumber(mobile_number) {
+    return knex("reservations")
+    .whereRaw(
+        "translate (mobile_number, '() -', '') like ?",
+        `%${mobile_number.replace(/\D/g, "")}%`
+    )
+    .orderBy("reservation_date")
+}
+
+async function create(reservation) {
+    return knex("reservations")
     .insert(reservation)
     .returning("*")
-    .then((newReservation) => {
-        // console.log("IN INSERT STATEMENT")
-        // console.log(newReservation)
-        return newReservation[0]
-    }
-    );
-    // console.log("AFTER INSERT STATEMENT")
-    // console.log(data)
-    return data;
+    .then((newReservation) => newReservation[0])
 }
 
-function read(reservationId) {
+async function read(reservation_id) {
     return knex("reservations")
     .select("*")
-    .where({ reservation_id: reservationId })
+    .where({ "reservation_id": reservation_id })
     .first();
 }
 
-function update(updatedReservation) {
+async function update(updatedReservation) {
     return knex("reservations")
     .where({ reservation_id: updatedReservation.reservation_id })
     .update(updatedReservation, "*")
     .then((updatedRes) => updatedRes[0])
 }
 
-function updateTableStatus(reservationId, status) {
+async function updateTableStatus(reservation_id, status) {
     return knex("reservations")
-    .where({ reservation_id: reservationId })
+    .where({ "reservation_id": reservation_id })
     .update({ status }, "*")
     .then((updatedRes) => updatedRes[0])
 }
@@ -52,6 +54,7 @@ function updateTableStatus(reservationId, status) {
 module.exports = {
     list,
     listReservationByDate,
+    listReservationByNumber,
     create,
     read,
     update,
