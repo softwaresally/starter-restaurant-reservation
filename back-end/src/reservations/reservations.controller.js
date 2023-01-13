@@ -23,6 +23,36 @@ async function create(req, res) {
   return res.status(201).json({ data });
 }
 
+// read function for reservations
+async function read(req, res, next) {
+  const { reservation: data } = res.locals;
+  res.json({ data });
+}
+
+async function update(req, res, next) {
+  const updatedReservation = {
+    ...req.body.data,
+    reservation_id: res.locals.reservation.reservation_id,
+  };
+
+  const data = await reservationsService.update(updatedReservation);
+  res.json({ data });
+}
+
+function reservationExists(req, res, next) {
+  reservationsService.read(req.params.reservationId)
+  .then((reservation) => {
+    if (reservation) {
+      res.locals.reservation = reservation;
+      return next();
+    }
+    next({
+      status: 400,
+      message: `Reservation cannot be found.`
+    });
+  })
+}
+
 // validation code below
 const validProperties = [
   "first_name",
@@ -87,6 +117,12 @@ const days = [
   "Friday",
   "Saturday",
 ];
+const validTableStatuses = [
+  "seated",
+  "booked",
+  "cancelled",
+  "finished",
+];
 
 function isValidDate(req, res, next) {
   const { data = {} } = req.body;
@@ -125,7 +161,60 @@ function isValidDate(req, res, next) {
   next();
 }
 
+function validTableStatus(req, res, next) {
+  const { status } = req.body.data;
+
+  if (!validTableStatuses.includes(status)) {
+    next({
+      status: 400,
+      message: `Table status not valid. Status must be "booked", "seated", "canceled", or "finished".`,
+    })
+  } else {
+    res.locals.status = status;
+    next();
+  }
+}
+
+async function updateTableStatus(req, res, next) {
+  const updatedStatus = {
+    ...res.locals.reservation,
+    status: res.locals.status,
+  }
+
+  const data = await reservationsService.update(updatedStatus);
+  res.json({ data });
+}
+
+function tableBooked(req, res, next) {
+  const { data } = req.body;
+
+  if (data.status === "seated" || data.status === "finished") {
+    return next({
+      status: 400,
+      message: `A new reservation cannot be created while the status is seated or finished`,
+    });
+  }
+  next();
+}
+
+function tableNotFinished(req, res, next) {
+  const { reservation_id } = req.params;
+
+  const status = res.locals.reservation.status;
+
+  if (status === "finished") {
+    return next({
+      status: 400,
+      message: `Reservation ${reservation_id} is finished.`,
+    })
+  }
+  next();
+}
+
 module.exports = {
   list: asyncErrorBoundary(list),
-  create: [hasValidProperties, isValidDate, asyncErrorBoundary(create)],
+  create: [hasValidProperties, isValidDate, tableBooked, asyncErrorBoundary(create)],
+  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
+  update: [asyncErrorBoundary(reservationExists), hasValidProperties, asyncErrorBoundary(update)],
+  updateTableStatus: [asyncErrorBoundary(reservationExists), validTableStatus, tableNotFinished, asyncErrorBoundary(updateTableStatus)],
 };

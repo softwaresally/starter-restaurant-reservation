@@ -2,17 +2,34 @@ const knex = require("../db/connection");
 
 function list() {
     return knex("tables")
-    .select("*");
+    .select("*")
+    .orderBy("table_name");
 }
 
-function create(newTable) {
+function create(table) {
     return knex("tables")
-    .insert(newTable)
+    .insert(table)
     .returning("*")
-    .then((table) => table[0]);
+    .then((newTable) => newTable[0]);
+}
+
+function read(tableId) {
+    return knex("tables")
+    .select("*")
+    .where({ table_id: tableId })
+    .first();
+}
+
+function update(updatedTable) {
+    return knex("tables")
+    .where({ table_id: updatedTable.table_id })
+    .update(updatedTable, "*")
+    .then((updated) => updated[0]);
 }
 
 module.exports = {
     list,
     create,
+    read,
+    update,
 }

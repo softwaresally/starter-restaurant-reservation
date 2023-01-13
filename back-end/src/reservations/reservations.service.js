@@ -28,8 +28,32 @@ function create(reservation) {
     return data;
 }
 
+function read(reservationId) {
+    return knex("reservations")
+    .select("*")
+    .where({ reservation_id: reservationId })
+    .first();
+}
+
+function update(updatedReservation) {
+    return knex("reservations")
+    .where({ reservation_id: updatedReservation.reservation_id })
+    .update(updatedReservation, "*")
+    .then((updatedRes) => updatedRes[0])
+}
+
+function updateTableStatus(reservationId, status) {
+    return knex("reservations")
+    .where({ reservation_id: reservationId })
+    .update({ status }, "*")
+    .then((updatedRes) => updatedRes[0])
+}
+
 module.exports = {
     list,
     listReservationByDate,
     create,
+    read,
+    update,
+    updateTableStatus,
 }
