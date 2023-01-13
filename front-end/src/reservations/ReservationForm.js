@@ -65,7 +65,7 @@ function ReservationForm({ reservation, changeHandler, submitHandler }) {
           <label className="col-sm-3 col-form-label">Date of Reservation</label>
           <div className="col-sm-8">
             <input
-              type="text"
+              type="date"
               name="reservation_date"
               className="form-control"
               id="reservation_date"
@@ -81,7 +81,7 @@ function ReservationForm({ reservation, changeHandler, submitHandler }) {
           <label className="col-sm-3 col-form-label">Time of Reservation</label>
           <div className="col-sm-8">
             <input
-              type="text"
+              type="time"
               name="reservation_time"
               className="form-control"
               id="reservation_time"
