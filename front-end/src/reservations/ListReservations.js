@@ -10,6 +10,7 @@ function ListReservations({ reservations }) {
                     <h5>{reservation.last_name}, {reservation.first_name} {reservation.mobile_number}</h5>
                     <h6>{reservation.reservation_date} at {reservation.reservation_time} for {reservation.people} people</h6>
                     <hr />
+                    
                 </div>
             ))}
         </div>

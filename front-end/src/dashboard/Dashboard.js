@@ -4,6 +4,7 @@ import useQuery from "../utils/useQuery";
 import ErrorAlert from "../layout/ErrorAlert";
 import DateChange from "./DateChange";
 import ListReservations from "../reservations/ListReservations";
+import { useHistory } from "react-router";
 
 /**
  * Defines the dashboard page.
@@ -14,6 +15,9 @@ import ListReservations from "../reservations/ListReservations";
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  const [tables, setTables] = useState([]);
+  const [tablesError, setTablesError] = useState(null);
+  const history = useHistory();
   const urlDate = useQuery().get("date");
 
   if (urlDate) {
