@@ -167,7 +167,7 @@ function validTableStatus(req, res, next) {
   } else {
     next({
       status: 400,
-      message: `Table status not valid. Status must be "booked", "seated", "cancelled", or "finished".`,
+      message: `Table status not valid ${status}. Status must be "booked", "seated", "cancelled", or "finished".`,
     });
   }
 }
