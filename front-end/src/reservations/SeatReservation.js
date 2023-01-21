@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router";
 import ErrorAlert from "../layout/ErrorAlert";
-import { listTables, readReservation, seatReservation, updateStatus } from "../utils/api";
+import { listTables, readReservation, seatReservation } from "../utils/api";
 
 function SeatReservation() {
     const [tables, setTables] = useState([]);
@@ -45,7 +45,6 @@ function SeatReservation() {
     }, [reservation_id]);
 
     const handleChange = (event) => {
-        // console.log(event.target.name, event.target.value)
         setTable({ [event.target.name]: event.target.value });
     }
 
