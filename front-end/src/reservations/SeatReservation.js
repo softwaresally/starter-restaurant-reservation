@@ -45,7 +45,8 @@ function SeatReservation() {
     }, [reservation_id]);
 
     const handleChange = (event) => {
-        setTable({ ...table, [event.target.name]: event.target.value });
+        // console.log(event.target.name, event.target.value)
+        setTable({ [event.target.name]: event.target.value });
     }
 
     async function handleSubmit(event) {
@@ -67,10 +68,10 @@ function SeatReservation() {
     }
 
     const withinCapacity = tables.map((table) => {
-        const overCapacity = Number(table.capacity) < Number(reservation.people);
+        const disabled = Number(table.capacity) < Number(reservation.people);
         return (
-            <option key={table.table_id} value={table.table_id} overCapacity={overCapacity}>
-                Table: {table.table_name} - Capacity: {table.capacity}
+            <option key={table.table_id} value={table.table_id} disabled={disabled}>
+                {table.table_name} - {table.capacity}
             </option>
         )
     })
@@ -79,20 +80,22 @@ function SeatReservation() {
         <div>
             <ErrorAlert error={resError} />
             <hr />
-            <form onSubmit={handleSubmit}>
-                <h4>Choose a table for your reservation</h4>
+            <form className="d-flex flex-column" onSubmit={handleSubmit}>
+                <label htmlFor="table_id">
+                    Choose a table for your reservation:
                 <hr />
-                <select 
-                    name="table_id"
-                    value="table_id"
-                    className="form-control"
-                    onChange={handleChange}
-                >
-                    <option>
-                        Choose A Table:
-                    </option>
-                    {withinCapacity}
-                </select>
+                    <select 
+                        name="table_id"
+                        value={table.table_id}
+                        className="form-control"
+                        onChange={handleChange}
+                    >
+                        <option value="choose a table">
+                            Choose A Table:
+                        </option>
+                        {withinCapacity}
+                    </select>
+                </label>
                 <hr />
                 <div>
                     <button className="btn btn-dark" type="submit">

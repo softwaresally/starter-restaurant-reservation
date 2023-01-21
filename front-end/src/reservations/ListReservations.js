@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 
 function ListReservations({ reservation}) {
@@ -18,9 +19,9 @@ function ListReservations({ reservation}) {
                     {/* <ErrorAlert error={error} /> */}
                     {reservation.status === "booked" ? (
                         <button className="btn btn-dark">
-                            <a href={`/reservations/${reservation.reservation_id}/seat`} value="reservation.reservation_id" style={{ color: "white" }}>
+                            <Link to={`/reservations/${reservation.reservation_id}/seat`} style={{ color: "white" }}>
                                 Seat
-                            </a>
+                            </Link>
                         </button>
                     ) : null}
                     {/* <div>
