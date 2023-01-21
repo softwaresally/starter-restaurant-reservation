@@ -76,7 +76,7 @@ function Dashboard({ date }) {
       <div>
         {tables.map((table, id) => {
           return (
-            <div key={id}>
+            <div key={table.table_id}>
               <h6>Table: {table.table_name} - Capacity: {table.capacity}</h6>
               {table.reservation_id && <div>
                 <p data-table-id-status={`${table.table_id}`} value={table.table_id}>
@@ -96,7 +96,6 @@ function Dashboard({ date }) {
           )
         })}
       </div>
-      {/* {JSON.stringify(reservations)} */}
     </main>
   );
 }

@@ -100,11 +100,10 @@ function EditReservation() {
             reservation_id: parseInt(reservation_id),
             status: "booked",
         };
-console.log(updatedReservation, "--------------");
-console.log(reservation, "--------------------------")
+
         try {
             await updateReservation(updatedReservation, abortController.signal);
-            history.push(`/dashboard?date=${updateReservation.reservation_date}`);
+            history.push(`/dashboard?date=${updatedReservation.reservation_date}`);
         } catch (error) {
             if (error.name !== "AbortError") setError(error);
         }

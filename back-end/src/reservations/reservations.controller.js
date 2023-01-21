@@ -4,24 +4,6 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 /**
  * List handler for reservation resources
  */
-// async function list(req, res) {
-//   const { date, mobile_number } = req.query;
-//   console.log(date, mobile_number);
-//   const formatted = new Date(date).toJSON().split("T")[0]
-//   console.log(typeof(formatted), formatted)
-//   let reservations;
-//   if (date) {
-//   reservations = await reservationsService.listReservationByDate(formatted)
-//   } else if (mobile_number) {
-//     reservations = await reservationsService.listReservationByNumber(mobile_number)
-//   } else {
-//     let currentDate = new Date().toJSON().slice(0, 10);
-//     reservations = await reservationsService.listReservationByDate(currentDate);
-//   }
-
-//   res.json({ data: reservations });
-// }
-
 async function list(req, res, next) {
   const { date, mobile_number } = req.query;
 

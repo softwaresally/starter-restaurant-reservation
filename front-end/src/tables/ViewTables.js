@@ -2,18 +2,7 @@ import React, { useEffect, useState } from "react";
 import { listTables } from "../utils/api";
 
 function ViewTables({ table }) {
-    // const [tables, setTables] = useState([]);
-
-    // useEffect(() => {
-    //     const abortController = new AbortController();
-    //     async function getTables() {
-    //         const tablesFromApi = await listTables();
-    //         setTables(tablesFromApi);
-    //     }
-    //     getTables();
-    //     return () => abortController.abort();
-    // }, []);
-
+    
     function tableStatus(table) {
         if (table.reservation_id) {
             return (
