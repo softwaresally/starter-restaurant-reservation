@@ -24,11 +24,6 @@ function ListReservations({ reservation}) {
                             </Link>
                         </button>
                     ) : null}
-                    {/* <div>
-                        <a href={`/reservations/${reservation.reservation_id}/seat`}>
-                            {reservation.status="booked" ? <button className="btn btn-dark">Seat</button> : <div> </div>}
-                        </a>
-                    </div> */}
                     <hr />
 
                 </div>
