@@ -11,8 +11,10 @@ async function list(req, res, next) {
 
   if (date) {
     reservations = await reservationsService.listReservationByDate(date);
-  } else {
+  } else if (mobile_number) {
     reservations = await reservationsService.listReservationByNumber(mobile_number);
+  } else {
+    reservations = await reservationsService.list();
   }
 
   res.json({ data: reservations });
