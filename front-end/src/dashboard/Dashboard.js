@@ -63,6 +63,7 @@ function Dashboard({ date }) {
   return (
     <main>
       <h1>Dashboard</h1>
+      <hr />
       <DateChange date={date} />
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Reservations for {date}</h4>
@@ -72,7 +73,9 @@ function Dashboard({ date }) {
       <div>
         {reservationsList}
       </div>
+      <hr />
       <h4>Tables:</h4>
+      <hr />
       <div>
         {tables.map((table, id) => {
           return (
