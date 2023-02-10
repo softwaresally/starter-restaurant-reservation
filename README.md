@@ -25,4 +25,4 @@ Tables can be marked as "finished" or "cancelled" where they will not longer sho
 
 A link to the application can be found here:
 
-https://restaurant-reservation-frontend-evyl.onrender.com/dashboard?date=2023-02-10
+https://restaurant-reservation-frontend-evyl.onrender.com/dashboard
