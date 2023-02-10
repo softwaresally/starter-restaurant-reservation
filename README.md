@@ -3,6 +3,7 @@ Restaurant Reservation Application
 A full stack application using Render as a web service, JavaScript, Node.js, Express.js, React, RESTful API, PostgreSQL, Knex
 
 Please note this site will have slow load times!!
+
 This website is deployed for free on Render with database support on ElephantSQL, and load times can be slow. Please be patient if you are viewing the deployed application. 
 
 
@@ -15,4 +16,5 @@ You are able to edit a reservation and change any of the components you need to,
 Tables can be marked as "finished" or "cancelled" where they will not longer show up on the dashboard screen.
 
 A link to the application can be found here:
+
 https://restaurant-reservation-frontend-evyl.onrender.com/dashboard?date=2023-02-10
